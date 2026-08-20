@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>💕 قرار عاشقانه</title>
+    
+    <!-- فونت -->
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap" rel="stylesheet" />
+    
+    <!-- کتابخانه تقویم شمسی -->
+    <link rel="stylesheet" href="https://unpkg.com/persian-datepicker@1.0.0/dist/css/persian-datepicker.min.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/persian-datepicker@1.0.0/dist/js/persian-datepicker.min.js"></script>
+    
+    <style>
+        /* ===== تنظیمات کلی ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fdfcfb 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 35px 25px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 182, 193, 0.3);
+        }
+
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+
+        /* ===== صفحه اول ===== */
+        .image-container {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin: 0 auto 20px;
+            border: 5px solid #ff6b8a;
+            box-shadow: 0 10px 30px rgba(255, 107, 138, 0.3);
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: 900;
+            color: #d6336c;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 10px rgba(214, 51, 108, 0.2);
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-yes, .btn-no {
+            padding: 12px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 700;
+            font-family: 'Vazirmatn', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-yes {
+            background: linear-gradient(135deg, #ff6b8a, #ee0979);
+            color: white;
+            box-shadow: 0 8px 25px rgba(238, 9, 121, 0.4);
+        }
+
+        .btn-yes:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 35px rgba(238, 9, 121, 0.5);
+        }
+
+        .btn-no {
+            background: #e0e0e0;
+            color: #555;
+        }
+
+        .btn-no:hover {
+            background: #d0d0d0;
+        }
+
+        /* دکمه ورود به پنل مدیریت در صفحه اول */
+        .admin-access {
+            margin-top: 20px;
+        }
+        .btn-admin {
+            background: transparent;
+            border: 2px solid #ff6b8a;
+            color: #d6336c;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-family: 'Vazirmatn', sans-serif;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-admin:hover {
+            background: #ff6b8a;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        /* ===== صفحه دوم ===== */
+        .question {
+            font-size: 26px;
+            font-weight: 900;
+            color: #d6336c;
+            margin-bottom: 30px;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .option {
+            background: #f8f0f5;
+            padding: 20px 10px;
+            border-radius: 20px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #4a1942;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .option:hover {
+            background: #ff6b8a;
+            color: white;
+            transform: scale(1.05);
+            border-color: #ee0979;
+            box-shadow: 0 8px 25px rgba(238, 9, 121, 0.3);
+        }
+
+        /* ===== صفحه سوم ===== */
+        .confirm-title {
+            font-size: 26px;
+            font-weight: 900;
+            color: #d6336c;
+            margin-bottom: 20px;
+        }
+
+        .location-question {
+            font-size: 20px;
+            font-weight: 700;
+            color: #4a1942;
+            margin-bottom: 15px;
+        }
+
+        #locationInput {
+            width: 100%;
+            padding: 15px 20px;
+            border-radius: 50px;
+            border: 2px solid #ff6b8a;
+            font-size: 16px;
+            font-family: 'Vazirmatn', sans-serif;
+            outline: none;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        #locationInput:focus {
+            border-color: #ee0979;
+            box-shadow: 0 0 20px rgba(238, 9, 121, 0.2);
+        }
+
+        /* ===== صفحه چهارم ===== */
+        .date-title {
+            font-size: 24px;
+            font-weight: 900;
+            color: #d6336c;
+            margin-bottom: 25px;
+        }
+
+        .date-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .date-container label {
+            font-size: 18px;
+            font-weight: 700;
+            color: #4a1942;
+            text-align: right;
+        }
+
+        #datepicker, #timepicker {
+            padding: 15px 20px;
+            border-radius: 50px;
+            border: 2px solid #ff6b8a;
+            font-size: 16px;
+            font-family: 'Vazirmatn', sans-serif;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        #datepicker:focus, #timepicker:focus {
+            border-color: #ee0979;
+            box-shadow: 0 0 20px rgba(238, 9, 121, 0.2);
+        }
+
+        /* ===== دکمه‌های عمومی ===== */
+        .btn-next {
+            background: linear-gradient(135deg, #ff6b8a, #ee0979);
+            color: white;
+            padding: 15px 50px;
+            border: none;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: 700;
+            font-family: 'Vazirmatn', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(238, 9, 121, 0.4);
+        }
+
+        .btn-next:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 35px rgba(238, 9, 121, 0.5);
+        }
+
+        /* ===== صفحه آخر ===== */
+        .final-card {
+            background: linear-gradient(135deg, #fff5f7, #ffe6ed);
+        }
+
+        .final-message {
+            font-size: 30px;
+            font-weight: 900;
+            color: #d6336c;
+            margin: 20px 0;
+        }
+
+        .final-detail {
+            font-size: 20px;
+            font-weight: 700;
+            color: #4a1942;
+            line-height: 2;
+            margin: 15px 0;
+        }
+
+        .final-detail span {
+            color: #ee0979;
+            font-weight: 900;
+        }
+
+        .care-message {
+            font-size: 22px;
+            font-weight: 900;
+            color: #d6336c;
+            margin: 20px 0;
+        }
+
+        .heart-container {
+            font-size: 40px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .floating-hearts {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            font-size: 30px;
+            margin-top: 20px;
+        }
+
+        .floating-hearts span {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .floating-hearts span:nth-child(2) { animation-delay: 0.5s; }
+        .floating-hearts span:nth-child(3) { animation-delay: 1s; }
+        .floating-hearts span:nth-child(4) { animation-delay: 1.5s; }
+        .floating-hearts span:nth-child(5) { animation-delay: 2s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* ===== پنل مدیریت ===== */
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .login-form input {
+            padding: 15px 20px;
+            border-radius: 50px;
+            border: 2px solid #ff6b8a;
+            font-size: 16px;
+            font-family: 'Vazirmatn', sans-serif;
+            outline: none;
+        }
+
+        .login-form input:focus {
+            border-color: #ee0979;
+            box-shadow: 0 0 20px rgba(238, 9, 121, 0.2);
+        }
+
+        .login-error {
+            color: red;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .admin-table th {
+            background: #ff6b8a;
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+        }
+
+        .admin-table td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .admin-table tr:hover {
+            background: #f8f0f5;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Vazirmatn', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background: #c82333;
+            transform: scale(1.05);
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-logout {
+            background: #6c757d;
+            color: white;
+            padding: 10px 30px;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Vazirmatn', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            background: #5a6268;
+        }
+
+        .btn-refresh {
+            background: #17a2b8;
+            color: white;
+            padding: 10px 30px;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Vazirmatn', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-refresh:hover {
+            background: #138496;
+        }
+
+        /* ===== ریسپانسیو ===== */
+        @media (max-width: 500px) {
+            .card {
+                padding: 25px 15px;
+            }
+            
+            .title {
+                font-size: 22px;
+            }
+            
+            .options {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn-yes, .btn-no {
+                padding: 10px 25px;
+                font-size: 16px;
+            }
+            
+            .admin-table {
+                font-size: 12px;
+            }
+            
+            .admin-table th, .admin-table td {
+                padding: 8px 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- ============================================ -->
+    <!-- صفحه اول - خوش‌آمدگویی -->
+    <!-- ============================================ -->
+    <div class="card page active" id="page1">
+        <div class="image-container">
+            <img src="https://www.upload.ee/image/19668544/IMG_20260820_113430_483.jpg" alt="پرنسس" />
+        </div>
+        <h1 class="title">خانم خوشگله بریم دیت؟ 💖</h1>
+        <div class="buttons">
+            <button class="btn-yes" id="yesBtn">بله ❤️</button>
+            <button class="btn-no" id="noBtn">نه 😢</button>
+        </div>
+        <!-- دکمه ورود به پنل مدیریت در صفحه اول -->
+        <div class="admin-access">
+            <button class="btn-admin" id="goToAdminFromPage1">🔐 ورود به پنل مدیریت</button>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- صفحه دوم - علاقه‌مندی‌ها -->
+    <!-- ============================================ -->
+    <div class="card page" id="page2">
+        <h1 class="question">🌸 به چیا علاقه داری؟</h1>
+        <div class="options" id="optionsContainer">
+            <div class="option" data-value="کافه">☕ کافه</div>
+            <div class="option" data-value="طبیعت">🌿 طبیعت</div>
+            <div class="option" data-value="گشت و گذار">🚗 گشت و گذار</div>
+            <div class="option" data-value="سینما">🎬 سینما</div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- صفحه سوم - تأیید انتخاب + مکان -->
+    <!-- ============================================ -->
+    <div class="card page" id="page3">
+        <h1 class="confirm-title">💕 پس بریم به <span id="selectedOptionDisplay"></span>!</h1>
+        <p class="location-question">خب قرارمون کجا باشه؟ 📍</p>
+        <input type="text" id="locationInput" placeholder="مثال: پارک ملت، کافه نادری..." />
+        <button class="btn-next" id="goToDateBtn">👈 صفحه بعد</button>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- صفحه چهارم - تاریخ و ساعت -->
+    <!-- ============================================ -->
+    <div class="card page" id="page4">
+        <h1 class="date-title">📅 تاریخ و ساعت قرارمون</h1>
+        <div class="date-container">
+            <label>📅 تاریخ:</label>
+            <input type="text" id="datepicker" placeholder="انتخاب تاریخ" />
+            <label>🕐 ساعت:</label>
+            <input type="time" id="timepicker" />
+        </div>
+        <button class="btn-next" id="finalBtn">💖 صفحه آخر</button>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- صفحه آخر - نهایی عاشقانه -->
+    <!-- ============================================ -->
+    <div class="card page final-card" id="page5">
+        <div class="heart-container">💕💖💗</div>
+        <h1 class="final-message">💕 قربون اون خوشگلیت بشم من 💕</h1>
+        <p class="final-detail">
+            پس <span id="finalDate"></span> ساعت <span id="finalTime"></span> 
+            تو <span id="finalPlace"></span> می‌بینمت 🌹
+        </p>
+        <p class="care-message">🌸 مراقب خودت باش عزیزم ❤️</p>
+        <div class="floating-hearts">
+            <span>💖</span><span>❤️</span><span>💕</span><span>💗</span><span>💘</span>
+        </div>
+        <button class="btn-next" id="goToAdminBtn" style="margin-top:20px;">🔐 ورود به پنل مدیریت</button>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- صفحه ششم - پنل مدیریت (لاگین) -->
+    <!-- ============================================ -->
+    <div class="card page" id="page6">
+        <h1 class="title">🔐 پنل مدیریت</h1>
+        <div class="login-form">
+            <input type="text" id="loginUsername" placeholder="نام کاربری" />
+            <input type="password" id="loginPassword" placeholder="رمز عبور" />
+            <button class="btn-next" id="loginBtn">ورود</button>
+            <div id="loginError" class="login-error"></div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- صفحه هفتم - داشبورد مدیریت -->
+    <!-- ============================================ -->
+    <div class="card page" id="page7">
+        <h1 class="title">📋 مدیریت تاریخ‌ها</h1>
+        <div id="adminContent">
+            <div id="tasksList">بارگذاری...</div>
+            <div class="admin-actions">
+                <button class="btn-refresh" id="refreshBtn">🔄 بروزرسانی</button>
+                <button class="btn-logout" id="logoutBtn">🚪 خروج</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+// ==========================================
+// تنظیمات JSONBin - (اطلاعات شما)
+// ==========================================
+const API_KEY = '$2a$10$ZYfil4mT7axSY401MMsi0.GGcICXNfpQMS4yhCMPtwAYp/eWI33bu';
+const BIN_ID = '6a86b9a1f5f4af5e292c2782';
+const BASE_URL = 'https://api.jsonbin.io/v3/b';
+
+const headers = {
+    'Content-Type': 'application/json',
+    'X-Master-Key': API_KEY
+};
+
+// ==========================================
+// توابع JSONBin
+// ==========================================
+async function getAllTasks() {
+    try {
+        const response = await fetch(`${BASE_URL}/${BIN_ID}/latest`, {
+            method: 'GET',
+            headers: headers
+        });
+        const data = await response.json();
+        return data.record.tasks || [];
+    } catch (error) {
+        console.error('خطا در دریافت:', error);
+        return [];
+    }
+}
+
+async function addTask(taskData) {
+    try {
+        const tasks = await getAllTasks();
+        tasks.push(taskData);
+        
+        const response = await fetch(`${BASE_URL}/${BIN_ID}`, {
+            method: 'PUT',
+            headers: headers,
+            body: JSON.stringify({ tasks: tasks })
+        });
+        return await response.json();
+    } catch (error) {
+        console.error('خطا در اضافه کردن:', error);
+        return null;
+    }
+}
+
+async function deleteTask(taskId) {
+    try {
+        const tasks = await getAllTasks();
+        const filteredTasks = tasks.filter(task => task.id !== taskId);
+        
+        const response = await fetch(`${BASE_URL}/${BIN_ID}`, {
+            method: 'PUT',
+            headers: headers,
+            body: JSON.stringify({ tasks: filteredTasks })
+        });
+        return await response.json();
+    } catch (error) {
+        console.error('خطا در حذف:', error);
+        return null;
+    }
+}
+
+// ==========================================
+// مدیریت نمایش صفحات
+// ==========================================
+function showPage(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+}
+
+// ==========================================
+// صفحه اول - دکمه‌های بله و نه
+// ==========================================
+document.addEventListener('DOMContentLoaded', function() {
+    const yesBtn = document.getElementById('yesBtn');
+    const noBtn = document.getElementById('noBtn');
+    
+    if (yesBtn && noBtn) {
+        let yesSize = 1;
+        
+        noBtn.addEventListener('mouseover', function() {
+            yesSize += 0.2;
+            yesBtn.style.transform = `scale(${yesSize})`;
+            yesBtn.style.fontSize = `${18 + (yesSize - 1) * 10}px`;
+            
+            const messages = [
+                'نه؟! 😢', 'مطمئنی؟ 🥺', 'آخه چرا؟ 💔', 
+                'بیا دیگه 😭', 'نذار گریه کنم 😢', 'خواهش میکنم 🥹'
+            ];
+            const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+            noBtn.textContent = randomMsg;
+            
+            const currentScale = parseFloat(noBtn.style.transform?.replace('scale(', '') || 1);
+            if (currentScale > 0.3) {
+                noBtn.style.transform = `scale(${currentScale - 0.1})`;
+            }
+        });
+        
+        noBtn.addEventListener('click', function() {
+            alert('🥺 آخه چرا؟ بیا دیگه...');
+        });
+        
+        yesBtn.addEventListener('click', function() {
+            showPage('page2');
+        });
+    }
+    
+    // ==========================================
+    // دکمه ورود به پنل از صفحه اول
+    // ==========================================
+    const goToAdminFromPage1 = document.getElementById('goToAdminFromPage1');
+    if (goToAdminFromPage1) {
+        goToAdminFromPage1.addEventListener('click', function() {
+            showPage('page6');
+        });
+    }
+    
+    // ==========================================
+    // صفحه دوم - انتخاب علاقه‌مندی
+    // ==========================================
+    const options = document.querySelectorAll('.option');
+    options.forEach(option => {
+        option.addEventListener('click', function() {
+            const selectedValue = this.getAttribute('data-value');
+            localStorage.setItem('selectedOption', selectedValue);
+            document.getElementById('selectedOptionDisplay').textContent = selectedValue;
+            showPage('page3');
+        });
+    });
+    
+    // ==========================================
+    // صفحه سوم - دریافت مکان
+    // ==========================================
+    const goToDateBtn = document.getElementById('goToDateBtn');
+    if (goToDateBtn) {
+        goToDateBtn.addEventListener('click', function() {
+            const location = document.getElementById('locationInput').value.trim();
+            if (!location) {
+                alert('لطفاً یک مکان وارد کن! 📍');
+                return;
+            }
+            localStorage.setItem('selectedLocation', location);
+            showPage('page4');
+            
+            // مقداردهی اولیه تقویم
+            setTimeout(() => {
+                if ($("#datepicker").persianDatepicker) {
+                    $("#datepicker").persianDatepicker({
+                        initialValue: true,
+                        initialValueType: 'persian',
+                        format: 'YYYY/MM/DD',
+                        initialValue: '1405/05/29',
+                        minDate: '1405/01/01',
+                        maxDate: '1405/12/29',
+                        autoClose: true
+                    });
+                }
+            }, 100);
+        });
+    }
+    
+    // ==========================================
+    // صفحه چهارم - دکمه نهایی + ذخیره در JSONBin
+    // ==========================================
+    const finalBtn = document.getElementById('finalBtn');
+    if (finalBtn) {
+        finalBtn.addEventListener('click', async function() {
+            const date = document.getElementById('datepicker').value || '1405/05/29';
+            const time = document.getElementById('timepicker').value || '20:00';
+            const option = localStorage.getItem('selectedOption') || 'کافه';
+            const location = localStorage.getItem('selectedLocation') || 'کافه';
+            
+            // ذخیره در JSONBin
+            const taskData = {
+                id: Date.now(),
+                option: option,
+                location: location,
+                date: date,
+                time: time,
+                createdAt: new Date().toISOString()
+            };
+            
+            const result = await addTask(taskData);
+            if (result) {
+                console.log('✅ اطلاعات با موفقیت ذخیره شد!');
+            } else {
+                console.error('❌ خطا در ذخیره‌سازی');
+            }
+            
+            // نمایش صفحه نهایی
+            document.getElementById('finalDate').textContent = date;
+            document.getElementById('finalTime').textContent = time;
+            document.getElementById('finalPlace').textContent = location;
+            showPage('page5');
+        });
+    }
+    
+    // ==========================================
+    // دکمه رفتن به پنل مدیریت
+    // ==========================================
+    const goToAdminBtn = document.getElementById('goToAdminBtn');
+    if (goToAdminBtn) {
+        goToAdminBtn.addEventListener('click', function() {
+            showPage('page6');
+        });
+    }
+    
+    // ==========================================
+    // پنل مدیریت - لاگین
+    // ==========================================
+    const loginBtn = document.getElementById('loginBtn');
+    if (loginBtn) {
+        loginBtn.addEventListener('click', async function() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+            const errorDiv = document.getElementById('loginError');
+            
+            if (username === 'mani' && password === '1385') {
+                errorDiv.textContent = '';
+                showPage('page7');
+                await loadAdminData();
+            } else {
+                errorDiv.textContent = '❌ نام کاربری یا رمز عبور اشتباه است!';
+            }
+        });
+    }
+    
+    // ==========================================
+    // پنل مدیریت - دکمه بروزرسانی
+    // ==========================================
+    const refreshBtn = document.getElementById('refreshBtn');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', loadAdminData);
+    }
+    
+    // ==========================================
+    // پنل مدیریت - دکمه خروج
+    // ==========================================
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function() {
+            if (confirm('آیا می‌خوای از پنل خارج بشی؟')) {
+                showPage('page1');
+            }
+        });
+    }
+});
+
+// ==========================================
+// پنل مدیریت - بارگذاری داده‌ها
+// ==========================================
+async function loadAdminData() {
+    const container = document.getElementById('tasksList');
+    container.innerHTML = '⏳ در حال بارگذاری...';
+    
+    try {
+        const tasks = await getAllTasks();
+        
+        if (tasks.length === 0) {
+            container.innerHTML = '<p style="color:#999; font-size:18px;">📭 هیچ تاریخی ثبت نشده است.</p>';
+            return;
+        }
+        
+        let html = `
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>علاقه</th>
+                        <th>مکان</th>
+                        <th>تاریخ</th>
+                        <th>ساعت</th>
+                        <th>عملیات</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+        
+        tasks.forEach((task, index) => {
+            html += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${task.option || '-'}</td>
+                    <td>${task.location || '-'}</td>
+                    <td>${task.date || '-'}</td>
+                    <td>${task.time || '-'}</td>
+                    <td>
+                        <button class="delete-btn" onclick="deleteTaskFromAdmin(${task.id})">🗑️</button>
+                    </td>
+                </tr>
+            `;
+        });
+        
+        html += '</tbody></table>';
+        container.innerHTML = html;
+    } catch (error) {
+        container.innerHTML = '❌ خطا در بارگذاری داده‌ها';
+        console.error(error);
+    }
+}
+
+// ==========================================
+// پنل مدیریت - حذف
+// ==========================================
+async function deleteTaskFromAdmin(taskId) {
+    if (!confirm('آیا مطمئنی می‌خوای این تاریخ رو حذف کنی؟')) {
+        return;
+    }
+    
+    const result = await deleteTask(taskId);
+    if (result) {
+        alert('✅ تاریخ با موفقیت حذف شد!');
+        await loadAdminData();
+    } else {
+        alert('❌ خطا در حذف تاریخ!');
+    }
+}
+</script>
+
+</body>
+</html>
